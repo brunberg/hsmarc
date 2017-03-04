@@ -1,0 +1,26 @@
+name:           hsmarc
+version:        0.0.1
+cabal-version:  >=1.2
+build-type:     Simple
+author:         Eric J. Petersen
+stability:      experimental
+category:       Data
+license:        BSD3
+synopsis:       Library for Marc21 bibliographic records
+copyright:      2010
+
+library
+  hs-source-dirs:  src
+  build-depends:   
+                   base >= 4,
+                   text,
+                   bytestring
+  ghc-options:     -Wall
+  other-modules:   
+                   Data.Marc21.Constants,
+                   Data.Marc21.Convenience,
+                   Data.Marc21.MnemText21
+  exposed-modules: 
+                   Data.Marc21,
+                   Data.Marc21.Mnem
+
