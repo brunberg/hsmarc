@@ -159,7 +159,9 @@ dirOfFlds xs = [ taginfo x | x <- chunksOf 12 xs ]
 encodeRecord :: Record -> ByteString       
 encodeRecord x = newRec
     where (dir, accFld)  = makeDirOfTags (C.empty, 0, C.empty) $ fields x
-          newRec1        = C.drop 5 (ldr x) <%> dir <%> ftP <%> accFld <%> rtP
+          newBaseAdd     = reverse $ take 5 $ reverse (show $ C.length dir + 25) ++ repeat '0'
+          tmpLdr         = C.take 12 (ldr x) <%> C.pack newBaseAdd <%> C.drop 17 (ldr x)
+          newRec1        = C.drop 5 tmpLdr <%> dir <%> ftP <%> accFld <%> rtP
           newRecSize1    = 5 + C.length newRec1
           newRecSize     = justifyRight 5 '0' (C.pack (show newRecSize1))
           newRec         = newRecSize <%> newRec1 
@@ -177,7 +179,7 @@ makeDirOfTags (dir,os,accFld) (CntlField t d : fs)           =
 makeDirOfTags (dir,os,accFld) (VarField t i1 i2 flds   : fs) = 
               makeDirOfTags (newDir,newOffset,newAccFld) fs
     where newData1   = C.concat [dlm `C.cons` s <%> d  | (s,d) <- flds]
-          newData    = i1 `C.cons` (i2 `C.cons` newData1 `C.snoc` ft)
+          newData    = i1 `C.cons` ((i2 `C.cons` newData1) `C.snoc` ft)
           (newDir,newOffset,newAccFld) = newDirData t newData dir os accFld
 
 -- 'newDirData' is a helper function to format portions of the directory       
